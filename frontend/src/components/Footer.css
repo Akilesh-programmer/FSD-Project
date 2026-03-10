@@ -1,0 +1,66 @@
+/* ===== App Footer ===== */
+.app-footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 24px;
+  background: var(--bg-secondary);
+  margin-top: auto;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-logo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  width: 18px;
+  height: 18px;
+}
+
+.footer-logo span {
+  border-radius: 2px;
+}
+
+.footer-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.footer-center {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.footer-right {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.footer-version {
+  padding: 2px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}
+
+@media (max-width: 640px) {
+  .footer-inner {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
