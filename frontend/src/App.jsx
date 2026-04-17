@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { fetchSolves } from "./utils/api";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -16,34 +17,44 @@ import Leaderboard from "./pages/Leaderboard";
 import "./App.css";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [solves, setSolves] = useState(() => {
-    const saved = localStorage.getItem("cubetimer_solves");
-    return saved ? JSON.parse(saved) : [];
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("cubetimer_user");
+    return saved ? JSON.parse(saved) : null;
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+  const [solves, setSolves] = useState([]);
 
+  // Persist user to localStorage and load solves when user changes
   useEffect(() => {
-    localStorage.setItem("cubetimer_solves", JSON.stringify(solves));
-  }, [solves]);
+    if (user) {
+      localStorage.setItem("cubetimer_user", JSON.stringify(user));
+      setIsAuthenticated(true);
+      fetchSolves()
+        .then((data) => setSolves(data))
+        .catch((err) => console.error("Failed to load solves:", err));
+    } else {
+      localStorage.removeItem("cubetimer_user");
+      setIsAuthenticated(false);
+      setSolves([]);
+    }
+  }, [user]);
+
+  const handleLogout = () => {
+    setUser(null);
+  };
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route
-          path="/login"
-          element={<Login setIsAuthenticated={setIsAuthenticated} />}
-        />
-        <Route
-          path="/signup"
-          element={<Signup setIsAuthenticated={setIsAuthenticated} />}
-        />
+        <Route path="/login" element={<Login setUser={setUser} />} />
+        <Route path="/signup" element={<Signup setUser={setUser} />} />
         <Route
           path="/home"
           element={
             isAuthenticated ? (
               <Home
-                setIsAuthenticated={setIsAuthenticated}
+                handleLogout={handleLogout}
                 solves={solves}
                 setSolves={setSolves}
               />
@@ -56,10 +67,7 @@ function App() {
           path="/statistics"
           element={
             isAuthenticated ? (
-              <Statistics
-                setIsAuthenticated={setIsAuthenticated}
-                solves={solves}
-              />
+              <Statistics handleLogout={handleLogout} solves={solves} />
             ) : (
               <Navigate to="/login" />
             )
@@ -69,7 +77,7 @@ function App() {
           path="/algorithms"
           element={
             isAuthenticated ? (
-              <Algorithms setIsAuthenticated={setIsAuthenticated} />
+              <Algorithms handleLogout={handleLogout} />
             ) : (
               <Navigate to="/login" />
             )
@@ -79,7 +87,7 @@ function App() {
           path="/leaderboard"
           element={
             isAuthenticated ? (
-              <Leaderboard setIsAuthenticated={setIsAuthenticated} />
+              <Leaderboard handleLogout={handleLogout} />
             ) : (
               <Navigate to="/login" />
             )
@@ -90,7 +98,8 @@ function App() {
           element={
             isAuthenticated ? (
               <Profile
-                setIsAuthenticated={setIsAuthenticated}
+                handleLogout={handleLogout}
+                user={user}
                 solves={solves}
               />
             ) : (

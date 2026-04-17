@@ -1,10 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { generateScramble } from "../utils/scramble";
 import { formatTime } from "../utils/format";
+import {
+  addSolve as apiAddSolve,
+  deleteSolve as apiDeleteSolve,
+  deleteAllSolves as apiDeleteAll,
+  updatePenalty as apiUpdatePenalty,
+} from "../utils/api";
 import Navbar from "../components/Navbar";
 import "./Home.css";
 
-function Home({ setIsAuthenticated, solves, setSolves }) {
+function Home({ handleLogout, solves, setSolves }) {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [scramble, setScramble] = useState(() => generateScramble());
@@ -91,10 +97,15 @@ function Home({ setIsAuthenticated, solves, setSolves }) {
             id: Date.now(),
             time: finalTime,
             scramble: scrambleRef.current,
-            timestamp: new Date().toLocaleString(),
+            timestamp: new Date().toISOString(),
             penalty: null,
           };
           setSolves((prev) => [newSolve, ...prev]);
+          apiAddSolve(finalTime, scrambleRef.current, null).then((saved) => {
+            setSolves((prev) =>
+              prev.map((s) => (s.id === newSolve.id ? saved : s)),
+            );
+          });
           if (isPB) {
             showToast(`🎉 New Personal Best! ${formatTime(finalTime)}`, "pb");
           }
@@ -140,10 +151,15 @@ function Home({ setIsAuthenticated, solves, setSolves }) {
         id: Date.now(),
         time: finalTime,
         scramble,
-        timestamp: new Date().toLocaleString(),
+        timestamp: new Date().toISOString(),
         penalty: null,
       };
       setSolves((prev) => [newSolve, ...prev]);
+      apiAddSolve(finalTime, scramble, null).then((saved) => {
+        setSolves((prev) =>
+          prev.map((s) => (s.id === newSolve.id ? saved : s)),
+        );
+      });
       if (isPB) {
         showToast(`🎉 New Personal Best! ${formatTime(finalTime)}`, "pb");
       }
@@ -155,11 +171,12 @@ function Home({ setIsAuthenticated, solves, setSolves }) {
   };
 
   const togglePenalty = (id, type) => {
+    const solve = solves.find((s) => s.id === id);
+    const newPenalty = solve.penalty === type ? null : type;
     setSolves((prev) =>
-      prev.map((s) =>
-        s.id === id ? { ...s, penalty: s.penalty === type ? null : type } : s,
-      ),
+      prev.map((s) => (s.id === id ? { ...s, penalty: newPenalty } : s)),
     );
+    apiUpdatePenalty(id, newPenalty);
   };
 
   const getAverage = (count) => {
@@ -186,6 +203,7 @@ function Home({ setIsAuthenticated, solves, setSolves }) {
 
   const deleteSolve = (id) => {
     setSolves((prev) => prev.filter((s) => s.id !== id));
+    apiDeleteSolve(id);
   };
 
   const newScramble = () => {
@@ -202,7 +220,7 @@ function Home({ setIsAuthenticated, solves, setSolves }) {
 
   return (
     <div className="home-page">
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar handleLogout={handleLogout} />
 
       {/* Toast Notification */}
       {toast && (
@@ -281,7 +299,13 @@ function Home({ setIsAuthenticated, solves, setSolves }) {
           <div className="panel-header">
             <h2>Recent Solves</h2>
             {solves.length > 0 && (
-              <button className="clear-all-btn" onClick={() => setSolves([])}>
+              <button
+                className="clear-all-btn"
+                onClick={() => {
+                  setSolves([]);
+                  apiDeleteAll();
+                }}
+              >
                 Clear All
               </button>
             )}

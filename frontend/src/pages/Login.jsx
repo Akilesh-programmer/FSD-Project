@@ -1,18 +1,25 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { loginUser } from "../utils/api";
 import "./Auth.css";
 
-function Login({ setIsAuthenticated }) {
+function Login({ setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      setIsAuthenticated(true);
+    setError("");
+    try {
+      const user = await loginUser(email, password);
+      localStorage.setItem("cubetimer_user", JSON.stringify(user));
+      setUser(user);
       navigate("/home");
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -116,6 +123,12 @@ function Login({ setIsAuthenticated }) {
               </button>
             </div>
           </div>
+
+          {error && (
+            <p style={{ color: "#ff6b6b", fontSize: "0.9rem", margin: "0" }}>
+              {error}
+            </p>
+          )}
 
           <button type="submit" className="auth-btn">
             Sign In

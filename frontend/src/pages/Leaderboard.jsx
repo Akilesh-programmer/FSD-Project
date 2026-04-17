@@ -124,7 +124,7 @@ const EVENTS = [
   { key: "5x5", label: "5×5", icon: "🟪" },
 ];
 
-function Leaderboard({ setIsAuthenticated }) {
+function Leaderboard({ handleLogout }) {
   const [event, setEvent] = useState("3x3");
   const [sortBy, setSortBy] = useState("single");
   const [search, setSearch] = useState("");
@@ -135,7 +135,7 @@ function Leaderboard({ setIsAuthenticated }) {
 
   return (
     <div className="leaderboard-page">
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar handleLogout={handleLogout} />
 
       <div className="leaderboard-content">
         <div className="page-header">

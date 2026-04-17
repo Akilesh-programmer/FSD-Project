@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import { formatTime } from "../utils/format";
 import "./Statistics.css";
 
-function Statistics({ setIsAuthenticated, solves }) {
+function Statistics({ handleLogout, solves }) {
   // Get effective time accounting for penalties
   const getEffectiveTime = (solve) => {
     if (solve.penalty === "dnf") return Infinity;
@@ -133,7 +133,7 @@ function Statistics({ setIsAuthenticated, solves }) {
 
   return (
     <div className="stats-page">
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar handleLogout={handleLogout} />
       <main className="stats-main">
         <div className="page-header">
           <h1 className="page-title">📊 Statistics</h1>

@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import { formatTime } from "../utils/format";
 import "./Profile.css";
 
-function Profile({ setIsAuthenticated, solves }) {
+function Profile({ handleLogout, user, solves }) {
   const [cubeType, setCubeType] = useState("3x3");
   const [inspection, setInspection] = useState(false);
   const [inspectionTime, setInspectionTime] = useState(15);
@@ -21,14 +21,14 @@ function Profile({ setIsAuthenticated, solves }) {
     return formatTime(solves.reduce((a, b) => a + b.time, 0) / solves.length);
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
+  const onLogout = () => {
+    handleLogout();
     navigate("/login");
   };
 
   return (
     <div className="profile-page">
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar handleLogout={handleLogout} />
       <main className="profile-main">
         <div className="page-header">
           <h1 className="page-title">Profile</h1>
@@ -42,8 +42,10 @@ function Profile({ setIsAuthenticated, solves }) {
               <span>🧊</span>
             </div>
             <div className="profile-info">
-              <h2>Cuber</h2>
-              <p className="profile-email">cuber@cubetimer.com</p>
+              <h2>{user?.name || "Cuber"}</h2>
+              <p className="profile-email">
+                {user?.email || "cuber@cubetimer.com"}
+              </p>
               <div className="profile-badges">
                 <span className="badge">Speed Solver</span>
                 <span className="badge accent">{cubeType} Main</span>
@@ -161,7 +163,7 @@ function Profile({ setIsAuthenticated, solves }) {
         {/* Account */}
         <div className="danger-section">
           <h2 className="section-title">Account</h2>
-          <button className="danger-btn" onClick={handleLogout}>
+          <button className="danger-btn" onClick={onLogout}>
             Sign Out
           </button>
         </div>

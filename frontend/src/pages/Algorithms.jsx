@@ -200,7 +200,7 @@ const ALGORITHMS = {
   ],
 };
 
-function Algorithms({ setIsAuthenticated }) {
+function Algorithms({ handleLogout }) {
   const [activeTab, setActiveTab] = useState("Beginner");
   const [copiedIndex, setCopiedIndex] = useState(null);
   const categories = Object.keys(ALGORITHMS);
@@ -213,7 +213,7 @@ function Algorithms({ setIsAuthenticated }) {
 
   return (
     <div className="algo-page">
-      <Navbar setIsAuthenticated={setIsAuthenticated} />
+      <Navbar handleLogout={handleLogout} />
       <main className="algo-main">
         <div className="page-header">
           <h1 className="page-title">Algorithms</h1>

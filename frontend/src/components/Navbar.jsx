@@ -1,11 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
-function Navbar({ setIsAuthenticated }) {
+function Navbar({ handleLogout }) {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
+  const onLogout = () => {
+    handleLogout();
     navigate("/login");
   };
 
@@ -60,7 +60,7 @@ function Navbar({ setIsAuthenticated }) {
         </NavLink>
       </div>
 
-      <button onClick={handleLogout} className="nav-logout-btn">
+      <button onClick={onLogout} className="nav-logout-btn">
         Sign Out
       </button>
     </nav>
