@@ -1,5 +1,5 @@
 # Multi-stage build for Spring Boot app (Java 21)
-FROM maven:3.10.1-jdk-21 AS builder
+FROM maven:3.9-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # copy pom and download dependencies (use go-offline for speed)
