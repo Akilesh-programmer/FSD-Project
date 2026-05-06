@@ -1,4 +1,11 @@
-const API_BASE = "http://localhost:8080/api";
+const _RAW_API_URL = import.meta.env.VITE_API_URL || "";
+let API_BASE;
+if (_RAW_API_URL) {
+  const trimmed = _RAW_API_URL.replace(/\/$/, "");
+  API_BASE = trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+} else {
+  API_BASE = "http://localhost:8080/api";
+}
 
 function getUser() {
   const saved = localStorage.getItem("cubetimer_user");
