@@ -1,5 +1,5 @@
 # Multi-stage build for Spring Boot app (Java 21)
-FROM maven:3.10-eclipse-temurin-21 AS builder
+FROM maven:3.10.1-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # copy pom and download dependencies (use go-offline for speed)
@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn -B -DskipTests package -DskipTests
 
 # runtime image
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
